@@ -10,5 +10,6 @@ if(!isset($_SESSION['auth']['id'])){
     exit;
 }
 
-include 'templates/home.php';
+header('Location: templates/dashboard.php');
+exit;
 ?>
