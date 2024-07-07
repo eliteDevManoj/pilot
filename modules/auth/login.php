@@ -39,22 +39,35 @@ if($isError){
     exit;
 }
 
-$userSearchQuery = "SELECT id FROM users WHERE email = '".$_POST['user_email']."'";
+$userSearchQuery = "SELECT * FROM users WHERE email = '".$_POST['user_email']."'";
 
 $userSearchQuery = $conn->query($userSearchQuery);
 
 if($userSearchQuery->num_rows == 0){
 
     $conn->close();
-    $_SESSION['error_msg'] = 'Login failed!';
+    $_SESSION['error_msg'] = 'user with the provided email does not exist';
     header('Location: ../../../login.php');
     exit;
 }
 
+$userId = $email = $passwordHash = null;
+
 while($authUser = $userSearchQuery->fetch_assoc()){
 
-    $_SESSION['auth'] = ['id' => $authUser['id'], 'email' => $authUser['email']]; 
+    $userId = $authUser['id'];
+    $email = $authUser['email'];
+    $passwordHash = $authUser['password']; 
 }
+
+if(!password_verify($_POST['user_password'], $passwordHash)){
+
+    $_SESSION['error_msg'] = 'password provided does not match.';
+    header('Location: ../../../login.php');
+    exit;
+}
+
+$_SESSION['auth'] = ['id' => $userId, 'email' => $email]; 
 
 $conn->close();
 $_SESSION['success_msg'] = 'Login successfull!';

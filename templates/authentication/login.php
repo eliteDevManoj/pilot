@@ -128,7 +128,7 @@
       </div>
       <label class="input" data-toggle-password="true">
        <input name="user_password" placeholder="Enter Password" type="password" value=""/>
-       <button class="btn btn-icon" data-toggle-password-trigger="true">
+       <button type="button" class="btn btn-icon" data-toggle-password-trigger="true">
         <i class="ki-filled ki-eye text-gray-500 toggle-password-active:hidden">
         </i>
         <i class="ki-filled ki-eye-slash text-gray-500 hidden toggle-password-active:block">

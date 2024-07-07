@@ -4,7 +4,7 @@
 
     session_start();
 
-    if(isset($_SESSION['auth'])){
+    if(isset($_SESSION['auth']['id'])){
 
         header('Location: index.php');
         exit;

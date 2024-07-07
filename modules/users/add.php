@@ -50,7 +50,9 @@ if($isError){
     exit;
 }
 
-$usersAddQuery = "INSERT INTO users (email, password) VALUES ('".$_POST['user_email']."', '".$_POST['user_password']."')";
+$passwordHash = password_hash($_POST['user_password'], PASSWORD_DEFAULT);
+
+$usersAddQuery = "INSERT INTO users (email, password) VALUES ('".$_POST['user_email']."', '".$passwordHash."')";
 
 $usersAdd = $conn->query($usersAddQuery);
 if(!$usersAdd){
