@@ -25,22 +25,22 @@
           Total Users:
          </span>
          <span class="text-md text-gray-800 font-semibold me-2">
-          39302,20
+         <?= count($users); ?>
          </span>
          <span class="text-md text-gray-600">
           Active Users
          </span>
          <span class="text-md text-gray-800 font-semibold">
-          724
+          <?= count($activeUsers); ?>
          </span>
         </div>
        </div>
        <div class="flex items-center gap-2.5">
         <a class="btn btn-sm btn-light" href="#">
-         Import CSV
+            Import CSV
         </a>
-        <a class="btn btn-sm btn-primary" href="#">
-         Add Member
+        <a class="btn btn-sm btn-primary" href="/templates/admin/users/add.php">
+            Add
         </a>
        </div>
       </div>
@@ -106,7 +106,7 @@
               <th class="min-w-[300px]">
                <span class="sort asc">
                 <span class="sort-label">
-                 Member
+                 User
                 </span>
                 <span class="sort-icon">
                 </span>
@@ -139,7 +139,7 @@
                 </span>
                </span>
               </th>
-              <th class="min-w-[180px]">
+              <!-- <th class="min-w-[180px]">
                <span class="sort">
                 <span class="sort-label">
                  Activity
@@ -147,7 +147,7 @@
                 <span class="sort-icon">
                 </span>
                </span>
-              </th>
+              </th> -->
               <th class="w-[60px]">
               </th>
              </tr>
@@ -179,21 +179,56 @@
               <?= $eachUser['role']; ?>
               </td>
               <td>
-               <span class="badge badge-danger badge-outline rounded-[30px]">
-                <span class="size-1.5 rounded-full bg-danger me-1.5">
-                </span>
-                On Leave
-               </span>
+
+                <?php 
+                    if($eachUser['status'] == 'INACTIVE'){
+                ?>
+                    <span class="badge badge-warning badge-outline rounded-[30px]">
+                        <span class="size-1.5 rounded-full bg-warning me-1.5">
+                        </span>
+                        In Active
+                    </span>
+                <?php
+                    }
+                    else if($eachUser['status'] == 'ACTIVE'){
+                ?>
+                    <span class="badge badge-success badge-outline rounded-[30px]">
+                        <span class="size-1.5 rounded-full bg-success me-1.5">
+                        </span>
+                        Active
+                    </span>
+                <?php
+                    }  
+                    else if($eachUser['status'] == 'DELETED'){
+                ?>
+                    <span class="badge badge-danger badge-outline rounded-[30px]">
+                        <span class="size-1.5 rounded-full bg-danger me-1.5">
+                        </span>
+                        Deleted
+                    </span>
+                <?php
+                    }
+                ?>
+
               </td>
+
               <td>
                <div class="flex items-center gap-1.5">
-                <img alt="" class="rounded-full size-4 shrink-0" src="https://keenthemes.com/static/metronic/tailwind/dist/assets/media/flags/malaysia.svg"/>
-                Malaysia
+                <?php 
+                    if(isset($eachUser['profile']['country'])){
+                ?>
+                    <img alt="" class="rounded-full size-4 shrink-0" src="https://keenthemes.com/static/metronic/tailwind/dist/assets/media/flags/malaysia.svg"/>
+                <?php
+                        echo $eachUser['profile']['country'];
+                    }
+                ?>
                </div>
               </td>
-              <td>
+
+              <!-- <td>
                Week ago
-              </td>
+              </td> -->
+
               <td class="text-center">
                <div class="menu flex-inline" data-menu="true">
                 <div class="menu-item" data-menu-item-offset="0, 10px" data-menu-item-placement="bottom-end" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:click">
@@ -227,7 +262,7 @@
                   <div class="menu-separator">
                   </div>
                   <div class="menu-item">
-                   <a class="menu-link" href="#">
+                   <a class="menu-link" href="../../../routes.php?model=user&action=edit&id=<?php echo $eachUser['id']?>">
                     <span class="menu-icon">
                      <i class="ki-filled ki-pencil">
                      </i>

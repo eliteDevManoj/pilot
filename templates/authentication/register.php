@@ -87,7 +87,7 @@
        <span class="text-2sm text-gray-600 me-1.5">
         Already have an Account ?
        </span>
-       <a class="text-2sm link" href="../../login.php">
+       <a class="text-2sm link" href="/login">
         Sign In
        </a>
       </div>

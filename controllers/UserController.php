@@ -15,8 +15,10 @@ class UserController {
     public function index(){
         
         $user = new User($this->db);
-
+        
         $users = $user->listing();
+
+        $activeUsers = $user->activeUsers();
 
         include 'templates/admin/users/listing.php';
         die;
@@ -130,6 +132,40 @@ class UserController {
                         exit;
                     }
                 }
+            }
+        }
+    }
+
+    public function edit($userId){
+
+        $user = new User($this->db);
+
+        $getUser = $user->getById($userId);
+
+        include 'templates/admin/users/edit.php';
+        die;
+    }
+
+    public function update($userId){
+
+        $user = new User($this->db);
+
+        $updateUser = $user->update($userId);
+
+        $this->db->close();
+        if(isset($updateUser['is_error'])){
+            
+            if($updateUser['is_error']){
+
+                $_SESSION['error_msg'] = $updateUser['error_msg'];
+                header("Location: ../../../routes.php?model=user&action=edit&id=".$userId."");
+                exit;
+            }
+            else{
+
+                $_SESSION['success_msg'] = $updateUser['success_msg'];
+                header("Location: ../../../routes.php?model=user&action=edit&id=".$userId."");
+                exit;
             }
         }
     }

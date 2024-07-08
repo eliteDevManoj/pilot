@@ -1,43 +1,15 @@
 <?php
- if(!isset($_SESSION)) 
- { 
-    session_start(); 
- } 
+require 'Router.php';
 
-require 'db_connect.php';
+$uri = parse_url($_SERVER['REQUEST_URI'])['path'];
+$method = $_SERVER['REQUEST_METHOD'];
 
-require 'controllers/AuthController.php';
+$router = new Router($conn);
 
-require 'controllers/UserController.php';
+$router->get('/', 'DashboardController', 'index');
 
-if(isset($_POST['login'])){
+$router->get('/login', 'AuthController', 'loginForm');
 
-    $authController = new AuthController($conn);
-    return $authController->authenticate();
-}
+$router->get('/register', 'AuthController', 'registerForm');
 
-if(isset($_POST['register'])){
-
-    $addUser = new UserController($conn);
-    return $addUser->register();
-}
-
-if(isset($_POST['create-user'])){
-
-    $createUser = new UserController($conn);
-    return $createUser->create();
-}
-
-if(isset($_GET['model']) && isset($_GET['action'])){
-
-    if($_GET['model'] == 'user'){
-
-        if($_GET['action'] == 'listing'){
-
-            $createUser = new UserController($conn);
-            $createUser->index();
-        }
-    }
-}
-
-
+$router->route($uri, $method);

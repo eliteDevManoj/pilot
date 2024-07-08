@@ -1,6 +1,8 @@
 <?php
 require 'models/Role.php';
 
+require 'models/UserHasRole.php';
+
 class User {
 
     private $db;
@@ -62,7 +64,27 @@ class User {
             $userData['city'] = isset($_POST['user_city']) ? $_POST['user_city'] : NULL;
             $userData['postal_code'] = isset($_POST['user_postal_code']) ? $_POST['user_postal_code'] : NULL;
             
+            $is_profile_public = isset($_POST['is_profile_public']) ? $_POST['is_profile_public'] : 1;
+
+            $is_public = 'ACTIVE';
+    
+            if($is_profile_public == 0){
+    
+                $is_public = 'INACTIVE';
+            }
+    
+            $userData['is_public'] = $is_public;
+
             $this->updateProfile($user['id'], $userData);
+
+            $roles = new Role($this->db);
+
+            $standardRole = $roles->roleByName('standard');
+
+            if(isset($standardRole[0]['role_name']) && isset($user['id'])){
+
+                $this->assignRole($user['id'], $standardRole[0]['id']);
+            }
         }
 
         $response = [
@@ -87,7 +109,8 @@ class User {
                                         country = '".$userData['country']."',
                                         state = '".$userData['state']."',
                                         city = '".$userData['city']."',
-                                        postal_code = '".$userData['postal_code']."'
+                                        postal_code = '".$userData['postal_code']."',
+                                        is_public = '".$userData['is_public']."'
                                         WHERE id = '".$userId."'
                                       ";
 
@@ -163,14 +186,17 @@ class User {
                 'id' => $users['id'],
                 'name' => $users['name'],
                 'email' => $users['email'],
-                'role' => $this->userRole($users['id'])
+                'phone' => $users['phone'],
+                'status' => $users['status'],
+                'role' => $this->role($users['id']),
+                'profile' => $this->profile($users['id']),
             ];
         }   
 
         return $response;
     }
 
-    public function userRole($userId){
+    public function role($userId){
 
         $response = NULL;
 
@@ -196,6 +222,134 @@ class User {
                 return $response;
             }
         }
+
+        return $response;
+    }
+
+    public function assignRole($userId, $roleId){
+
+        if($userId && $roleId){
+
+            $userHasRole = new UserHasRole($this->db);
+            $userHasRole->assignRole($userId, $roleId);
+        }
+
+        return true;
+    }
+
+    public function profile($userId){
+
+        $response = [];
+
+        $userProfileQuery = "SELECT * FROM user_profile WHERE user_id = '".$userId."'";
+
+        $userProfileQueryResult = $this->db->query($userProfileQuery);
+
+        while($row = $userProfileQueryResult->fetch_assoc()){
+
+            $response = $row; 
+        }   
+
+        return $response;
+    }
+
+    public function activeUsers(){
+
+        $response = [];
+
+        $activeUsersQuery = "SELECT * FROM users WHERE status = 'ACTIVE'";
+
+        $activeUsersResult = $this->db->query($activeUsersQuery);
+
+        while($row = $activeUsersResult->fetch_assoc()){
+
+            $response[] = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'email' => $row['email'],
+                'phone' => $row['phone'],
+                'status' => $row['status'],
+                'role' => $this->role($row['id']),
+                'profile' => $this->profile($row['id']),
+            ];
+        }
+
+        return $response;
+    }
+
+    public function getById($id){
+
+        $response = [];
+
+        $fetchUserQuery = "SELECT * FROM users WHERE id = '".$id."'";
+
+        $userQueryResult = $this->db->query($fetchUserQuery);
+
+        while($row = $userQueryResult->fetch_assoc()){
+
+            $response = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'email' => $row['email'],
+                'phone' => $row['phone'],
+                'status' => $row['status'],
+                'role' => $this->role($row['id']),
+                'profile' => $this->profile($row['id']),
+            ];
+        }
+
+        return $response;
+    }
+
+    public function update($userId){
+
+        $response = [];
+
+        $name = isset($_POST['user_name']) ? $_POST['user_name'] : NULL;
+        $phone = isset($_POST['user_phone']) ? $_POST['user_phone'] : NULL;
+
+        $updateUserQUery = "UPDATE users set name='".$name."', phone='".$phone."'";
+
+        if(!$this->db->query($updateUserQUery)){
+
+            $response = [
+                'error_msg' => 'User updation failed!',
+                'is_error' => true
+            ];
+
+            return $response;
+        }
+
+        $address = isset($_POST['user_address']) ? $_POST['user_address'] : NULL;
+        $country = isset($_POST['user_country']) ? $_POST['user_country'] : NULL;
+        $state = isset($_POST['user_state']) ? $_POST['user_state'] : NULL;
+        $city = isset($_POST['user_city']) ? $_POST['user_city'] : NULL;
+        $postal_code = isset($_POST['user_postal_code']) ? $_POST['user_postal_code'] : NULL;
+        
+        $is_profile_public = isset($_POST['is_profile_public']) ? $_POST['is_profile_public'] : 1;
+
+        $is_public = 'ACTIVE';
+
+        if($is_profile_public == 0){
+
+            $is_public = 'INACTIVE';
+        }
+
+        $userData = [
+            'address' => $address,
+            'country' => $country,
+            'state' => $state,
+            'city' => $city,
+            'postal_code' => $postal_code,
+            'is_public' => $is_public
+        ];
+
+        $this->updateProfile($userId, $userData);
+
+        $response = [
+            'success_msg' => 'User updated successfully!',
+            'is_error' => false
+        ];
 
         return $response;
     }

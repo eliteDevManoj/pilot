@@ -1,4 +1,8 @@
 <?php
+if(!isset($_SESSION)) 
+{ 
+  session_start(); 
+} 
 
 require 'models/Auth.php';
 
@@ -9,6 +13,30 @@ class AuthController {
     public function __construct($conn)
     {
         $this->db = $conn;
+    }
+
+    public function loginForm(){
+
+        if(isset($_SESSION['auth']['id'])){
+
+            header('Location: /');
+            exit;
+        }
+
+        require 'templates/authentication/login.php';
+        exit;        
+    }
+
+    public function registerForm(){
+
+        if(isset($_SESSION['auth']['id'])){
+
+            header('Location: /');
+            exit;
+        }
+        
+        require 'templates/authentication/register.php';
+        exit;
     }
 
     public function authenticate(){

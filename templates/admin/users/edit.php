@@ -1,28 +1,28 @@
 <?php 
-  include '../layouts/header.php';
+  include 'templates/admin/layouts/header.php';
 ?>
 
 <div class="flex grow">
   
-  <?php include '../layouts/sidebar.php'; ?>
+  <?php include 'templates/admin/layouts/sidebar.php'; ?>
 
    <div class="wrapper flex grow flex-col">
 
-    <?php include '../layouts/navbar.php'; ?>
+    <?php include 'templates/admin/layouts/navbar.php'; ?>
 
     <main class="grow content pt-5" id="content" role="content">
     
-    <?php include '../layouts/sub-navbar.php'; ?>
+    <?php include 'templates/admin/layouts/sub-navbar.php'; ?>
 
      <!-- begin: container -->
      <div class="container-fixed">
       <div class="flex flex-wrap items-center lg:items-end justify-between gap-5 pb-7.5">
        <div class="flex flex-col justify-center gap-2">
         <h1 class="text-xl font-semibold leading-none text-gray-900">
-         User - Add
+         User - Edit
         </h1>
         <div class="flex items-center gap-2 text-sm font-medium text-gray-600">
-         Fill up the form below to add a new user.
+         Edit form below to update this user.
         </div>
        </div>
        <div class="flex items-center gap-2.5">
@@ -40,10 +40,9 @@
 
      <div class="container-fixed">
       
-     <form method="post" action="../../../routes.php">
-     
-        <input type="hidden" name="create-user" value="register">
-        <div class="grid gap-5 lg:gap-7.5 xl:w-[38.75rem] mx-auto">
+     <form method="post" action="../../../routes.php?model=user&action=update&id=<?=$getUser['id'];?>">
+        
+      <div class="grid gap-5 lg:gap-7.5 xl:w-[38.75rem] mx-auto">
        <div class="card pb-2.5">
         <div class="card-header" id="basic_settings">
          <h3 class="card-title">
@@ -54,7 +53,7 @@
            <span class="switch-label">
             Public Profile
            </span>
-           <input checked name="is_profile_public" type="checkbox" value="1"/>
+           <input <?php if(isset($getUser['profile']['is_public'])){ if($getUser['profile']['is_public'] == 'ACTIVE'){ ?> checked <?php } } ?> name="is_profile_public" type="checkbox" value="1"/>
           </label>
          </div>
         </div>
@@ -98,33 +97,33 @@
           <label class="form-label max-w-56">
            Name
           </label>
-          <input class="input" type="text" name="user_name" placeholder="name" value=""/>
+          <input class="input" type="text" name="user_name" placeholder="name" value="<?= $getUser['name'];?>"/>
          </div>
          <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
           <label class="form-label max-w-56">
            Phone number
           </label>
-          <input class="input" placeholder="phone number" name="user_phone" type="text" value=""/>
+          <input class="input" placeholder="phone number" name="user_phone" type="text" value="<?= $getUser['phone'];?>"/>
          </div>
          <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
           <label class="form-label max-w-56">
            Email
           </label>
-          <input class="input" placeholder="example@gmail.com" name="user_email" type="text" value=""/>
+          <input disabled class="input" placeholder="example@gmail.com" name="user_email" type="text" value="<?= $getUser['email'];?>"/>
          </div>
 
-         <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+         <!-- <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
           <label class="form-label max-w-56">
            Password
           </label>
           <input class="input" placeholder="password" name="user_password" type="password" value=""/>
-         </div>
+         </div> -->
 
          <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
           <label class="form-label max-w-56">
            Address
           </label>
-          <input class="input" placeholder="address" name="user_address" type="text" value=""/>
+          <input class="input" placeholder="address" name="user_address" type="text" value="<?= $getUser['profile']['address'];?>"/>
          </div>
          
          <!-- <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
@@ -147,29 +146,29 @@
           <label class="form-label max-w-56">
            Country
           </label>
-          <input class="input" placeholder="country" name="user_country" type="text" value=""/>
+          <input class="input" placeholder="country" name="user_country" type="text" value="<?= $getUser['profile']['country'];?>"/>
          </div>
          <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
           <label class="form-label max-w-56">
            State
           </label>
-          <input class="input" placeholder="state" name="user_state" type="text" value=""/>
+          <input class="input" placeholder="state" name="user_state" type="text" value="<?= $getUser['profile']['state'];?>"/>
          </div>
          <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
           <label class="form-label max-w-56">
            City
           </label>
-          <input class="input" placeholder="city" name="user_city" type="text" value=""/>
+          <input class="input" placeholder="city" name="user_city" type="text" value="<?= $getUser['profile']['city'];?>"/>
          </div>
          <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5 mb-2.5">
           <label class="form-label max-w-56">
            Postcode
           </label>
-          <input class="input" placeholder="postal code" name = "user_postal_code" type="text" value=""/>
+          <input class="input" placeholder="postal code" name = "user_postal_code" type="text" value="<?= $getUser['profile']['postal_code'];?>"/>
          </div>
          <div class="flex justify-end">
           <button class="btn btn-primary" type="submit">
-           Add User
+           Update
           </button>
          </div>
         </div>
@@ -183,5 +182,5 @@
      <!-- end: container -->
 
 <?php
-  include '../layouts/footer.php';
+  include 'templates/admin/layouts/footer.php';
 ?>
