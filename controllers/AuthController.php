@@ -19,7 +19,7 @@ class AuthController {
 
         if(isset($_SESSION['auth']['id'])){
 
-            header('Location: /');
+            header('Location: /dashboard');
             exit;
         }
 
@@ -31,7 +31,7 @@ class AuthController {
 
         if(isset($_SESSION['auth']['id'])){
 
-            header('Location: /');
+            header('Location: /dashboard');
             exit;
         }
         
@@ -49,7 +49,7 @@ class AuthController {
 
                 $this->db->close();
                 $_SESSION['error_msg'] = $LoginValidations['msg'];
-                header('Location: ../../../login.php');
+                header('Location: /login');
                 exit;
             }
         }
@@ -61,13 +61,13 @@ class AuthController {
         if(isset($authResponse['error_msg'])){
 
             $_SESSION['error_msg'] = $authResponse['error_msg'];
-            header('Location: ../../../login.php');
+            header('Location: /login');
             exit;
         }
         else if(isset($authResponse['success_msg'])){
 
             $_SESSION['success_msg'] = $authResponse['success_msg'];
-            header('Location: ../../../index.php');
+            header('Location: /dashboard');
             exit;
         }
     }
@@ -105,5 +105,17 @@ class AuthController {
             'msg' => $msg,
             'isError' => $isError
         ];
+    }
+
+    public function logout(){
+
+        if(isset($_SESSION['auth']['id'])){
+
+            session_unset();
+            session_destroy();
+            
+            header('Location: /login');
+            exit;
+        }
     }
 }

@@ -99,6 +99,14 @@ class User {
 
         $response = [];
 
+        if(isset($userData['photo'])){
+
+            if(isset($_FILES['fileToUpload'])){
+
+                move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $userData['photo']);
+            }
+        }
+
         $userProfileQuery = "SELECT * FROM user_profile WHERE id = '".$userId."'";
 
         if($this->db->query($userProfileQuery)->num_rows > 0){
@@ -110,7 +118,8 @@ class User {
                                         state = '".$userData['state']."',
                                         city = '".$userData['city']."',
                                         postal_code = '".$userData['postal_code']."',
-                                        is_public = '".$userData['is_public']."'
+                                        is_public = '".$userData['is_public']."',
+                                        photo = '".$userData['photo']."'
                                         WHERE id = '".$userId."'
                                       ";
 
@@ -140,7 +149,8 @@ class User {
                                         country, 
                                         state, 
                                         city, 
-                                        postal_code
+                                        postal_code,
+                                        photo
                                     ) 
                                     VALUES(
                                         '".$userData['user_id']."',
@@ -148,7 +158,8 @@ class User {
                                         '".$userData['country']."',
                                         '".$userData['state']."',
                                         '".$userData['city']."',
-                                        '".$userData['postal_code']."'
+                                        '".$userData['postal_code']."',
+                                        '".$userData['photo']."'
                                     )";
 
             $addUserProfile = $this->db->query($addUserProfileQuery);
@@ -308,7 +319,7 @@ class User {
         $name = isset($_POST['user_name']) ? $_POST['user_name'] : NULL;
         $phone = isset($_POST['user_phone']) ? $_POST['user_phone'] : NULL;
 
-        $updateUserQUery = "UPDATE users set name='".$name."', phone='".$phone."'";
+        $updateUserQUery = "UPDATE users set name='".$name."', phone='".$phone."' WHERE id='".$userId."'" ;
 
         if(!$this->db->query($updateUserQUery)){
 
@@ -326,7 +337,7 @@ class User {
         $city = isset($_POST['user_city']) ? $_POST['user_city'] : NULL;
         $postal_code = isset($_POST['user_postal_code']) ? $_POST['user_postal_code'] : NULL;
         
-        $is_profile_public = isset($_POST['is_profile_public']) ? $_POST['is_profile_public'] : 1;
+        $is_profile_public = isset($_POST['is_profile_public'][0]) ? $_POST['is_profile_public'][0] : 0;
 
         $is_public = 'ACTIVE';
 
@@ -334,6 +345,11 @@ class User {
 
             $is_public = 'INACTIVE';
         }
+      
+        
+        $target_dir = "uploads/profiles/";
+        $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+       
 
         $userData = [
             'address' => $address,
@@ -341,7 +357,8 @@ class User {
             'state' => $state,
             'city' => $city,
             'postal_code' => $postal_code,
-            'is_public' => $is_public
+            'is_public' => $is_public,
+            'photo' => $target_file
         ];
 
         $this->updateProfile($userId, $userData);

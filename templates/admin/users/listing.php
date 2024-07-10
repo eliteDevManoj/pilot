@@ -39,7 +39,7 @@
         <a class="btn btn-sm btn-light" href="#">
             Import CSV
         </a>
-        <a class="btn btn-sm btn-primary" href="/templates/admin/users/add.php">
+        <a class="btn btn-sm btn-primary" href="/admin/users/add">
             Add
         </a>
        </div>
@@ -262,7 +262,7 @@
                   <div class="menu-separator">
                   </div>
                   <div class="menu-item">
-                   <a class="menu-link" href="../../../routes.php?model=user&action=edit&id=<?php echo $eachUser['id']?>">
+                   <a class="menu-link" href="/admin/users/edit?id=<?php echo $eachUser['id']?>">
                     <span class="menu-icon">
                      <i class="ki-filled ki-pencil">
                      </i>

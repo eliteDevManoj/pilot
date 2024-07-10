@@ -1,18 +1,18 @@
 <?php 
-  include '../layouts/header.php';
+  include 'templates/admin/layouts/header.php';
 ?>
 
 <div class="flex grow">
   
-  <?php include '../layouts/sidebar.php'; ?>
+  <?php include 'templates/admin/layouts/sidebar.php'; ?>
 
    <div class="wrapper flex grow flex-col">
 
-    <?php include '../layouts/navbar.php'; ?>
+    <?php include 'templates/admin/layouts/navbar.php'; ?>
 
     <main class="grow content pt-5" id="content" role="content">
     
-    <?php include '../layouts/sub-navbar.php'; ?>
+    <?php include 'templates/admin/layouts/sub-navbar.php'; ?>
 
      <!-- begin: container -->
      <div class="container-fixed">
@@ -40,10 +40,9 @@
 
      <div class="container-fixed">
       
-     <form method="post" action="../../../routes.php">
+     <form method="post" action="/admin/users/add">
      
-        <input type="hidden" name="create-user" value="register">
-        <div class="grid gap-5 lg:gap-7.5 xl:w-[38.75rem] mx-auto">
+      <div class="grid gap-5 lg:gap-7.5 xl:w-[38.75rem] mx-auto">
        <div class="card pb-2.5">
         <div class="card-header" id="basic_settings">
          <h3 class="card-title">
@@ -183,5 +182,5 @@
      <!-- end: container -->
 
 <?php
-  include '../layouts/footer.php';
+  include 'templates/admin/layouts/footer.php';
 ?>

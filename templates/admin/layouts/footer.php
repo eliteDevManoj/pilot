@@ -1394,6 +1394,18 @@
     }
     ?>
   <!--end::Page scripts-->
+
+  <script>
+   document.addEventListener('DOMContentLoaded', function() {
+        var fileInput = document.getElementById('profile-avatar');
+        fileInput.onchange = evt => {
+            const [file] = fileInput.files
+            if (file) {
+                userProfileAvatar.src = URL.createObjectURL(file)
+            }
+        }
+    });
+</script>
  </body>
 
 </html>

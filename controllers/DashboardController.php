@@ -20,4 +20,16 @@ class DashboardController {
         require 'templates/dashboard.php';
         exit;
     }
+
+    public function homePage(){
+
+        if(isset($_SESSION['auth']['id'])){
+
+            header('Location: /dashboard');
+            exit;
+        }
+
+        header('Location: /login');
+        exit;
+    }
 }

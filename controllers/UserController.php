@@ -34,7 +34,7 @@ class UserController {
 
                 $this->db->close();
                 $_SESSION['error_msg'] = $validationUser['error_msg'];
-                header('Location: ../../../register.php');
+                header('Location: /register');
                 exit;
             }
         }
@@ -48,13 +48,13 @@ class UserController {
             if($addUser['is_error']){
 
                 $_SESSION['error_msg'] = $addUser['error_msg'];
-                header('Location: ../../../register.php');
+                header('Location: /register');
                 exit;
             }
             else{
 
                 $_SESSION['success_msg'] = $addUser['success_msg'];
-                header('Location: ../../../index.php');
+                header('Location: /login');
                 exit;
             }
         }
@@ -98,6 +98,18 @@ class UserController {
         return $response;
     }
 
+    public function add(){
+
+        if(!isset($_SESSION['auth']['id'])){
+
+            header('Location: /login');
+            exit;
+        }
+
+        require 'templates/admin/users/add.php';
+        exit;
+    }
+
     public function create(){
 
         $validationUser = $this->validateUserRegister();
@@ -108,7 +120,7 @@ class UserController {
                 
                 $this->db->close();
                 $_SESSION['error_msg'] = $validationUser['error_msg'];
-                header('Location: ../templates/admin/users/add.php');
+                header('Location: /admin/users/add');
                 exit;
             }
             else{
@@ -122,13 +134,13 @@ class UserController {
                     if($addUser['is_error']){
         
                         $_SESSION['error_msg'] = $addUser['error_msg'];
-                        header('Location: ../templates/admin/users/add.php');
+                        header('Location: /admin/users/add');
                         exit;
                     }
                     else{
         
                         $_SESSION['success_msg'] = $addUser['success_msg'];
-                        header('Location: ../templates/admin/users/add.php');
+                        header('Location: /admin/users/add');
                         exit;
                     }
                 }
@@ -136,7 +148,16 @@ class UserController {
         }
     }
 
-    public function edit($userId){
+    public function show($params){
+    
+        $userId = isset($params['id']) ? $params['id'] : NULL;
+
+        if(!isset($userId)){
+            
+            $_SESSION['error_msg'] = 'Cannot find the user with given Id';
+            header('Location: /admin/users/listing');
+            exit;
+        }
 
         $user = new User($this->db);
 
@@ -146,7 +167,9 @@ class UserController {
         die;
     }
 
-    public function update($userId){
+    public function update(){
+
+        $userId = $_POST['id'];
 
         $user = new User($this->db);
 
@@ -158,13 +181,13 @@ class UserController {
             if($updateUser['is_error']){
 
                 $_SESSION['error_msg'] = $updateUser['error_msg'];
-                header("Location: ../../../routes.php?model=user&action=edit&id=".$userId."");
+                header("Location: /admin/users/edit?id=".$userId."");
                 exit;
             }
             else{
 
                 $_SESSION['success_msg'] = $updateUser['success_msg'];
-                header("Location: ../../../routes.php?model=user&action=edit&id=".$userId."");
+                header("Location: /admin/users/edit?id=".$userId."");
                 exit;
             }
         }

@@ -31,16 +31,28 @@ class Router {
         $this->add('POST', $uri, $controller, $action);
     }
 
-    public function route($uri, $method){
+    public function put($uri, $controller, $action){
 
+        $this->add('PUT', $uri, $controller, $action);
+    }
+
+    public function route($uri, $method, $queryString){
+      
         foreach($this->routes as $route){
             if($route['uri'] === $uri && $route['method'] === strtoupper($method)){
 
                 $optController = $route['controller'];
                 $optAction = $route['action'];
                 
+                $params = [];
+                if(isset($queryString)){
+
+                    parse_str($queryString, $queryArray);
+                    $params = $queryArray;
+                }
+               
                 $controller = new $optController($this->db);
-                $controller->$optAction();
+                $controller->$optAction($params);
                 exit;
             }
         }
