@@ -5,6 +5,8 @@ require 'controllers/DashboardController.php';
 
 require 'controllers/UserController.php';
 
+require 'controllers/APIControllers/UserAPIController.php';
+
 class Router {
 
     private $db;
@@ -34,6 +36,11 @@ class Router {
     public function put($uri, $controller, $action){
 
         $this->add('PUT', $uri, $controller, $action);
+    }
+
+    public function delete($uri, $controller, $action){
+
+        $this->add('DELETE', $uri, $controller, $action);
     }
 
     public function route($uri, $method, $queryString){

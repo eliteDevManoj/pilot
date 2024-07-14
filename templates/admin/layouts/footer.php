@@ -1354,7 +1354,7 @@
   <!--end::Page layout--> 
  
  <!--begin::Page scripts-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
     <script src="../../../resources/js/core.bundle.js">
     </script>
     <script src="../../../resources/vendors/apexcharts/apexcharts.min.js">
@@ -1363,6 +1363,8 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/users.js"></script>
     <?php 
     if(isset($_SESSION['success_msg'])){
         ?>
@@ -1394,18 +1396,6 @@
     }
     ?>
   <!--end::Page scripts-->
-
-  <script>
-   document.addEventListener('DOMContentLoaded', function() {
-        var fileInput = document.getElementById('profile-avatar');
-        fileInput.onchange = evt => {
-            const [file] = fileInput.files
-            if (file) {
-                userProfileAvatar.src = URL.createObjectURL(file)
-            }
-        }
-    });
-</script>
  </body>
 
 </html>

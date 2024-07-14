@@ -77,7 +77,7 @@
   </style>
   <div class="flex items-center justify-center grow bg-center bg-no-repeat page-bg">
    <div class="card max-w-[370px] w-full">
-    <form action="/register" class="card-body flex flex-col gap-5 p-10" id="sign_up_form" method="post">
+    <form action="/register" class="card-body flex flex-col gap-5 p-10" id="register-form" method="post">
  
     <div class="text-center mb-2.5">
       <h3 class="text-lg font-semibold text-gray-900 leading-none mb-2.5">
@@ -164,7 +164,7 @@
   </div>
   <!--end::Page layout-->
   <!--begin::Page scripts-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
   <script src="../../resources/js/core.bundle.js">
   </script>
   <script src="../../resources/vendors/apexcharts/apexcharts.min.js">
@@ -202,6 +202,46 @@
     }
   ?>
   <!--end::Page scripts-->
+
+  <script>
+    $(document).on('ready', function(){
+
+      $('#register-form').submit( function(event) {
+
+        event.preventDefault();
+
+        var base_url = window.location.origin + '/api'
+
+        var form = $(this);
+        var formData = new FormData(form[0]); 
+
+        $.ajax({
+            type: form.attr('method'),
+            url: base_url + form.attr('action'),
+            data: formData,
+            contentType: false,  
+            processData: false, 
+            success: function(response) {
+              if(response.data.error){
+              
+                toastr.error(response.data.error_msg);
+              }
+              else if(response.data.success){
+    
+                toastr.success(response.data.success_msg);
+
+                setTimeout(function () {
+                  window.location.href = window.location.origin + '/login';
+                }, 1500);
+              }
+            },
+            error: function(error) {
+              toastr.error(error);
+            }
+        });
+      });
+    })
+  </script>
  </body>
 
 </html>

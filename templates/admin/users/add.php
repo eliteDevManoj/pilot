@@ -40,8 +40,8 @@
 
      <div class="container-fixed">
       
-     <form method="post" action="/admin/users/add">
-     
+     <form method="post" action="/admin/users/add" id="admin-add-user-form" enctype="multipart/form-data">
+
       <div class="grid gap-5 lg:gap-7.5 xl:w-[38.75rem] mx-auto">
        <div class="card pb-2.5">
         <div class="card-header" id="basic_settings">
@@ -66,8 +66,11 @@
            <span class="text-2sm font-medium text-gray-600">
             150x150px JPEG, PNG Image
            </span>
+
+           <input type="hidden" id="user-profile-img" value="">
+
            <div class="image-input size-16" data-image-input="true">
-            <input accept=".png, .jpg, .jpeg" name="avatar" type="file">
+            <input accept=".png, .jpg, .jpeg" name="avatar" type="file" id="add-user-profile-photo">
              <input name="avatar_remove" type="hidden">
               <div class="btn btn-icon btn-icon-xs btn-light shadow-default absolute z-1 size-5 -top-0.5 -right-0.5 rounded-full" data-image-input-remove="" data-tooltip="#image_input_tooltip" data-tooltip-trigger="hover">
                <i class="ki-filled ki-cross">

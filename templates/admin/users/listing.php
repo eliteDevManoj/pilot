@@ -164,7 +164,7 @@
               </td>
               <td>
                <div class="flex items-center gap-2.5">
-                <img alt="" class="rounded-full size-9 shrink-0" src="../../../../../static/metronic/tailwind/dist/assets/media/avatars/300-1.png"/>
+                <img src="<?php if(isset($eachUser['profile']['photo'])){ if(!empty($eachUser['profile']['photo'])){ echo '/'.$eachUser['profile']['photo']; }else{ echo '/resources/media/avatars/blank.png'; } }else{ echo '/resources/media/avatars/blank.png'; }?>" alt="/resources/media/avatars/blank.png" class="rounded-full size-9 shrink-0"/>
                 <div class="flex flex-col">
                  <a class="text-sm font-semibold text-gray-900 hover:text-primary-active mb-px" href="#">
                     <?= $eachUser['name'];?>
@@ -262,7 +262,7 @@
                   <div class="menu-separator">
                   </div>
                   <div class="menu-item">
-                   <a class="menu-link" href="/admin/users/edit?id=<?php echo $eachUser['id']?>">
+                   <a class="menu-link" href="/admin/users/edit?id=<?php echo $eachUser['id'];?>">
                     <span class="menu-icon">
                      <i class="ki-filled ki-pencil">
                      </i>
@@ -286,15 +286,15 @@
                   <div class="menu-separator">
                   </div>
                   <div class="menu-item">
-                   <a class="menu-link" href="#">
-                    <span class="menu-icon">
-                     <i class="ki-filled ki-trash">
-                     </i>
-                    </span>
-                    <span class="menu-title">
-                     Remove
-                    </span>
-                   </a>
+                   <button class="btn menu-link admin-user-remove-btn" data-modal-toggle="#admin-user-delete-modal" data-user-id="<?=$eachUser['id'];?>">
+                        <span class="menu-icon">
+                            <i class="ki-filled ki-trash">
+                            </i>
+                        </span>
+                        <span class="menu-title">
+                            Remove
+                        </span>
+                    </button>
                   </div>
                  </div>
                 </div>
@@ -330,8 +330,34 @@
      </div>
      <!-- end: container -->
 
+    <div class="modal" data-modal="true" id="admin-user-delete-modal">
+        <div class="modal-content modal-center max-w-[600px] top-[10%]">
+            <div class="modal-header">
+                <h1 class="text-xl font-semibold leading-none text-gray-900">
+                    Remove User
+                </h1>
+                <a class="btn btn-sm btn-light" data-modal-dismiss="true" href="#">
+                    Close
+                </a>
+            </div>
+            <div class="modal-body flex items-center gap-2 text-sm font-medium text-gray-600">
+            
+            <input type="hidden" value="" name="user_id" id="admin-user-delete-modal-user-id">
+              Are you sure you want to remove this user?
+            </div>
+            <hr>
+            <div class="modal-footer justify-end p-2">
+                <div class="flex justify-end gap-2.5">
+                    <button class="btn btn-light" data-modal-dismiss="true">
+                        Cancel
+                    </button>
+                    <button class="btn btn-danger" id="admin-user-delete-btn">
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 <?php
   include 'templates/admin/layouts/footer.php';
 ?>
-
-

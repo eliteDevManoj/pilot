@@ -1649,19 +1649,19 @@
        <div class="menu" data-menu="true">
         <div class="menu-item" data-menu-item-offset="20px, 10px" data-menu-item-placement="bottom-end" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:click">
          <div class="menu-toggle btn btn-icon rounded-full">
-          <img alt="" class="size-9 rounded-full border-2 border-success shrink-0" src="../../../../../static/metronic/tailwind/dist/assets/media/avatars/300-2.png">
+          <img src="<?php if(isset($getUser['profile']['photo'])){ echo '/'.$getUser['profile']['photo']; }else{ echo '/resources/media/avatars/blank.png'; }?>" alt="/resources/media/avatars/300-2.png" class="size-9 rounded-full border-2 border-success shrink-0">
           </img>
          </div>
          <div class="menu-dropdown menu-default light:border-gray-300 w-full max-w-[250px]">
           <div class="flex items-center justify-between px-5 py-1.5 gap-1.5">
            <div class="flex items-center gap-2">
-            <img alt="" class="size-9 rounded-full border-2 border-success" src="../../../../../static/metronic/tailwind/dist/assets/media/avatars/300-2.png">
+            <img src="<?php if(isset($getUser['profile']['photo'])){ echo '/'.$getUser['profile']['photo']; }else{ echo '/resources/media/avatars/blank.png'; }?>" alt="/resources/media/avatars/300-2.png" class="size-9 rounded-full border-2 border-success">
              <div class="flex flex-col gap-1.5">
               <span class="text-sm text-gray-800 font-semibold leading-none">
                Cody Fisher
               </span>
               <a class="text-xs text-gray-600 hover:text-primary font-medium leading-none" href="get-started.html">
-               c.fisher@gmail.com
+              <?php if(isset($getUser['email'])){ echo $getUser['email']; } ?>
               </a>
              </div>
             </img>
@@ -1685,7 +1685,7 @@
             </a>
            </div>
            <div class="menu-item">
-            <a class="menu-link" href="user-profile.html">
+            <a class="menu-link" href="/admin/users/profile">
              <span class="menu-icon">
               <i class="ki-filled ki-profile-circle">
               </i>
@@ -1904,7 +1904,7 @@
             </div>
            </div>
            <div class="menu-item px-4 py-1.5">
-            <a class="btn btn-sm btn-light justify-center" href="../../authentication/classic/sign-in.html">
+            <a class="btn btn-sm btn-light justify-center" href="/logout">
              Log out
             </a>
            </div>

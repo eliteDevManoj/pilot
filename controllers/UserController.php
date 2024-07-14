@@ -1,7 +1,5 @@
 <?php
 
-require 'models/User.php';
-
 class UserController {
 
     private $db;
@@ -109,45 +107,7 @@ class UserController {
         require 'templates/admin/users/add.php';
         exit;
     }
-
-    public function create(){
-
-        $validationUser = $this->validateUserRegister();
-
-        if(isset($validationUser['is_error'])){
-
-            if($validationUser['is_error']){
-                
-                $this->db->close();
-                $_SESSION['error_msg'] = $validationUser['error_msg'];
-                header('Location: /admin/users/add');
-                exit;
-            }
-            else{
-
-                $user = new User($this->db);
-                $addUser = $user->create();
-        
-                $this->db->close();
-                if(isset($addUser['is_error'])){
-                    
-                    if($addUser['is_error']){
-        
-                        $_SESSION['error_msg'] = $addUser['error_msg'];
-                        header('Location: /admin/users/add');
-                        exit;
-                    }
-                    else{
-        
-                        $_SESSION['success_msg'] = $addUser['success_msg'];
-                        header('Location: /admin/users/add');
-                        exit;
-                    }
-                }
-            }
-        }
-    }
-
+   
     public function show($params){
     
         $userId = isset($params['id']) ? $params['id'] : NULL;
@@ -167,7 +127,26 @@ class UserController {
         die;
     }
 
-    public function update(){
+    public function profile(){
+
+        $userId = isset($_SESSION['auth']['id']) ? $_SESSION['auth']['id'] : NULL;
+
+        if(!isset($userId)){
+            
+            $_SESSION['error_msg'] = 'Cannot find the user with given Id';
+            header('Location: /login');
+            exit;
+        }
+
+        $user = new User($this->db);
+
+        $getUser = $user->getById($userId);
+
+        include 'templates/admin/users/profile.php';
+        die;
+    }
+
+    public function profileUpdate(){
 
         $userId = $_POST['id'];
 
@@ -181,13 +160,13 @@ class UserController {
             if($updateUser['is_error']){
 
                 $_SESSION['error_msg'] = $updateUser['error_msg'];
-                header("Location: /admin/users/edit?id=".$userId."");
+                header("Location: /admin/users/profile");
                 exit;
             }
             else{
 
                 $_SESSION['success_msg'] = $updateUser['success_msg'];
-                header("Location: /admin/users/edit?id=".$userId."");
+                header("Location: /admin/users/profile");
                 exit;
             }
         }

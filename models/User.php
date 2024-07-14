@@ -74,6 +74,8 @@ class User {
             }
     
             $userData['is_public'] = $is_public;
+           
+            $userData['file'] = isset( $_FILES["file"]) ?  $_FILES["file"] : NULL;
 
             $this->updateProfile($user['id'], $userData);
 
@@ -99,88 +101,87 @@ class User {
 
         $response = [];
 
-        if(isset($userData['photo'])){
+        $userSearchQuery = "SELECT * FROM user_profile WHERE user_id = '".$userId."'";
+        $userSearchQueryResult = $this->db->query($userSearchQuery);
 
-            if(isset($_FILES['fileToUpload'])){
+        if($userSearchQueryResult->num_rows == 0){
 
-                move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $userData['photo']);
-            }
-        }
+            $addUserProfileQuery = "INSERT INTO user_profile(user_id, address, country, state, city, postal_code, is_public) 
+                                    VALUES(
+                                        '".$userData['user_id']."', 
+                                        '".$userData['address']."', 
+                                        '".$userData['country']."', 
+                                        '".$userData['state']."',
+                                        '".$userData['city']."', 
+                                        '".$userData['postal_code']."',
+                                        '".$userData['is_public']."'
+                                    )";
 
-        $userProfileQuery = "SELECT * FROM user_profile WHERE id = '".$userId."'";
-
-        if($this->db->query($userProfileQuery)->num_rows > 0){
+            $this->db->query($addUserProfileQuery);
+        }else{
 
             $updateUserProfileQuery = "UPDATE user_profile SET
-                                        user_id = '".$userId."',
-                                        address = '".$userData['address']."',
-                                        country = '".$userData['country']."',
-                                        state = '".$userData['state']."',
-                                        city = '".$userData['city']."',
-                                        postal_code = '".$userData['postal_code']."',
-                                        is_public = '".$userData['is_public']."',
-                                        photo = '".$userData['photo']."'
-                                        WHERE id = '".$userId."'
-                                      ";
+                                            address = '".$userData['address']."', 
+                                            country = '".$userData['country']."',
+                                            state = '".$userData['state']."', 
+                                            city = '".$userData['city']."',
+                                            postal_code = '".$userData['postal_code']."', 
+                                            is_public = '".$userData['is_public']."'
+                                            WHERE user_id = '".$userId."'
+                                        ";
 
-            $updateUserProfile = $this->db->query($updateUserProfileQuery);
-            if(!$updateUserProfile){
+            $this->db->query($updateUserProfileQuery);
+        }
+       
+        $userProfileQuery = "SELECT * FROM user_profile WHERE id = '".$userId."'";
+        $userProfileQueryResult = $this->db->query($userProfileQuery);
+        
+        $userProfileRow = $userProfileQueryResult->fetch_assoc();
+        $userOldProfilePhoto = isset($userProfileRow['photo']) ? $userProfileRow['photo'] : NULL;
+       
+        if(empty($userData['old_profile_pic']) && isset($userOldProfilePhoto)){
 
-                $response = [
-                    'error_msg' => 'User profile updation failed!',
-                    'is_error' => true
-                ];
-
-                return $response;
+            if(file_exists($userOldProfilePhoto)){
+               
+                unlink($userOldProfilePhoto);
             }
 
-            $response = [
-                'success_msg' => 'User profile updated successfully!',
-                'is_error' => false
-            ];
+            $userOldProfilePhoto = NULL;
+        }
+        
+        /** upload new profile if exists */
+        $userProfilePhoto = NULL;
 
-            return $response;
+        $profilePhotoUploadPath = 'uploads/profiles/';
+      
+        if($userData['file']){
+
+            $fileName = 'img_'.time().'.jpg';
+
+            $uploadedFile = $profilePhotoUploadPath  . basename($fileName);
+    
+            move_uploaded_file($userData['file']['tmp_name'], $uploadedFile);
+
+            $userProfilePhoto = $profilePhotoUploadPath.$fileName;
         }
         else{
 
-            $addUserProfileQuery = "INSERT INTO user_profile(
-                                        user_id, 
-                                        address, 
-                                        country, 
-                                        state, 
-                                        city, 
-                                        postal_code,
-                                        photo
-                                    ) 
-                                    VALUES(
-                                        '".$userData['user_id']."',
-                                        '".$userData['address']."', 
-                                        '".$userData['country']."',
-                                        '".$userData['state']."',
-                                        '".$userData['city']."',
-                                        '".$userData['postal_code']."',
-                                        '".$userData['photo']."'
-                                    )";
-
-            $addUserProfile = $this->db->query($addUserProfileQuery);
-
-            if(!$addUserProfile){
-
-                $response = [
-                    'error_msg' => 'User profile updation failed!',
-                    'is_error' => true
-                ];
-    
-                return $response;
-            }
-
-            $response = [
-                'success_msg' => 'User profile updated successfully!',
-                'is_error' => false
-            ];
-
-            return $response;
+            $userProfilePhoto = isset($userOldProfilePhoto) && !empty($userOldProfilePhoto) && $userOldProfilePhoto != '' ? $userOldProfilePhoto : NULL;
         }
+        
+        $updateUserProfilePhotoQuery = "UPDATE user_profile SET 
+                                        photo = '".$userProfilePhoto."'
+                                        WHERE user_id = '".$userId."'
+                                    ";
+
+        $this->db->query($updateUserProfilePhotoQuery);
+
+        $response = [
+            'success_msg' => 'User profile updated successfully!',
+            'is_error' => false
+        ];
+
+        return $response;
     }
 
     public function listing(){
@@ -330,13 +331,7 @@ class User {
 
             return $response;
         }
-
-        $address = isset($_POST['user_address']) ? $_POST['user_address'] : NULL;
-        $country = isset($_POST['user_country']) ? $_POST['user_country'] : NULL;
-        $state = isset($_POST['user_state']) ? $_POST['user_state'] : NULL;
-        $city = isset($_POST['user_city']) ? $_POST['user_city'] : NULL;
-        $postal_code = isset($_POST['user_postal_code']) ? $_POST['user_postal_code'] : NULL;
-        
+       
         $is_profile_public = isset($_POST['is_profile_public'][0]) ? $_POST['is_profile_public'][0] : 0;
 
         $is_public = 'ACTIVE';
@@ -345,20 +340,16 @@ class User {
 
             $is_public = 'INACTIVE';
         }
-      
-        
-        $target_dir = "uploads/profiles/";
-        $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-       
 
         $userData = [
-            'address' => $address,
-            'country' => $country,
-            'state' => $state,
-            'city' => $city,
-            'postal_code' => $postal_code,
+            'address' => isset($_POST['user_address']) ? $_POST['user_address'] : NULL,
+            'country' => isset($_POST['user_country']) ? $_POST['user_country'] : NULL,
+            'state' => isset($_POST['user_state']) ? $_POST['user_state'] : NULL,
+            'city' => isset($_POST['user_city']) ? $_POST['user_city'] : NULL,
+            'postal_code' => isset($_POST['user_postal_code']) ? $_POST['user_postal_code'] : NULL,
             'is_public' => $is_public,
-            'photo' => $target_file
+            'old_profile_pic' => isset($_POST['old_profile_pic']) ? $_POST['old_profile_pic'] : NULL,
+            'file' => isset($_FILES["file"]) ? $_FILES["file"] : NULL
         ];
 
         $this->updateProfile($userId, $userData);
@@ -366,6 +357,63 @@ class User {
         $response = [
             'success_msg' => 'User updated successfully!',
             'is_error' => false
+        ];
+
+        return $response;
+    }
+
+    public function delete($userId){
+
+        $response = [];
+
+        $userExistQuery = "SELECT id FROM users WHERE id = '".$userId."'";
+        $userExistQueryResult = $this->db->query($userExistQuery);
+
+        if($userExistQueryResult->num_rows > 0){
+
+            $userDeleteQuery = "DELETE FROM users WHERE id = '".$userId."'";
+            $userDeleteQueryResult = $this->db->query($userDeleteQuery);
+    
+            if($userDeleteQueryResult){
+                
+                $userProfileExistQuery = "SELECT id FROM user_profile WHERE user_id = '".$userId."'";
+                $userProfileExistQueryResult = $this->db->query($userProfileExistQuery);
+
+                if($userProfileExistQueryResult->num_rows > 0){
+
+                    $userProfileRow = $userProfileExistQueryResult->fetch_assoc();
+
+                    if(isset($userProfileRow['photo'])) {
+
+                        if(file_exists(($userProfileRow['photo']))){
+
+                            unlink($userProfileRow['photo']);
+                        }
+                    }
+
+                    $userProfileQuery = "DELETE FROM user_profile WHERE user_id = '".$userId."'";
+                    $this->db->query($userProfileQuery);
+                }
+                
+                $response = [
+                    'success_msg' => 'User removed successfully!',
+                    'is_error' => false
+                ];
+                
+                return $response;
+            }
+    
+            $response = [
+                'error_msg' => 'Removing user operation failed!',
+                'is_error' => true
+            ];
+
+            return $response;
+        }
+
+        $response = [
+            'error_msg' => 'User does not exists with the provided Id!',
+            'is_error' => true
         ];
 
         return $response;
